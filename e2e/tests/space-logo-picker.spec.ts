@@ -102,6 +102,30 @@ test.describe('Space Settings -> Space Logo', () => {
 			.not.toEqual(rolled.avatar_seed);
 	});
 
+	// The trigger sits low in the settings dialog, so the popover flips above
+	// it. On a short window the panel is taller than the gap left over, and it
+	// used to run off the top of the screen with the colour row unreachable.
+	test('the picker stays inside the viewport on a short window', async ({
+		page,
+		wiki,
+	}) => {
+		const space = await wiki.space();
+
+		await page.setViewportSize({ width: 1280, height: 700 });
+		await page.goto(space.url());
+		await page.waitForLoadState('networkidle');
+
+		await openPicker(page);
+
+		const box = await page.locator('[data-slot="content"]').boundingBox();
+		if (!box) throw new Error('The picker popover has no bounding box');
+		expect(box.y).toBeGreaterThanOrEqual(0);
+		expect(box.y + box.height).toBeLessThanOrEqual(700);
+
+		// The colour row is the part that was clipped, so it must be clickable.
+		await page.getByRole('button', { name: 'green', exact: true }).click();
+	});
+
 	test('a new space is created with a mark rather than a bare initial', async ({
 		page,
 		request,
