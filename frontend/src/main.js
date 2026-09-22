@@ -5,7 +5,7 @@ import router from './router';
 import { initSocket } from './socket';
 import { pinia } from './stores';
 
-import translationPlugin, { loadTranslations } from './translation';
+import translationPlugin from './translation';
 
 import {
 	Alert,
@@ -36,25 +36,19 @@ const globalComponents = {
 
 setConfig('resourceFetcher', frappeRequest);
 
-async function bootstrap() {
-	await loadTranslations();
+const app = createApp(App);
 
-	const app = createApp(App);
+app.use(pinia);
+app.use(router);
+app.use(translationPlugin);
+app.use(resourcesPlugin);
+app.use(pageMetaPlugin);
 
-	app.use(pinia);
-	app.use(router);
-	app.use(translationPlugin);
-	app.use(resourcesPlugin);
-	app.use(pageMetaPlugin);
+const socket = initSocket();
+app.config.globalProperties.$socket = socket;
 
-	const socket = initSocket();
-	app.config.globalProperties.$socket = socket;
-
-	for (const key in globalComponents) {
-		app.component(key, globalComponents[key]);
-	}
-
-	app.mount('#app');
+for (const key in globalComponents) {
+	app.component(key, globalComponents[key]);
 }
 
-bootstrap();
+app.mount('#app');

@@ -62,14 +62,14 @@ const headerMenuItems = computed(() => [
 	{ label: __('Log out'), icon: 'lucide-log-out', onClick: logout },
 ]);
 
-const navItems = [
+const navItems = computed(() => [
 	{ label: __('Spaces'), icon: 'lucide-rocket', to: { name: 'SpaceList' } },
 	{
 		label: __('Change Requests'),
 		icon: 'lucide-git-branch',
 		to: { name: 'ChangeRequests' },
 	},
-];
+]);
 
 function logout() {
 	sessionStore.logout.submit();
