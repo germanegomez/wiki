@@ -54,12 +54,13 @@ test.describe('Translations', () => {
 				page.getByText('Toggle Theme', { exact: true }),
 			).toBeVisible();
 
-			// The same mounted sidebar and menu update when the catalog arrives.
-			await expect(
-				page.getByRole('link', { name: 'Espacios de prueba', exact: true }),
-			).toBeVisible({ timeout: 15_000 });
+			// The same mounted menu and sidebar update when the catalog arrives.
 			await expect(
 				page.getByText('Cambiar tema de prueba', { exact: true }),
+			).toBeVisible({ timeout: 15_000 });
+			await page.keyboard.press('Escape');
+			await expect(
+				page.getByRole('link', { name: 'Espacios de prueba', exact: true }),
 			).toBeVisible();
 		} finally {
 			await updateDoc(request, 'User', 'Administrator', {
